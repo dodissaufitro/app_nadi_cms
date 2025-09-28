@@ -18,7 +18,11 @@ class AdministrasiResource extends Resource
 {
     protected static ?string $model = Administrasi::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $navigationGroup = 'Manajemen Nagari';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

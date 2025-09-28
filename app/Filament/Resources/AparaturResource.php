@@ -17,7 +17,11 @@ class AparaturResource extends Resource
 {
     protected static ?string $model = Aparatur::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
+    protected static ?string $navigationGroup = 'Manajemen Nagari';
+
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

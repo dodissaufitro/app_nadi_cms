@@ -26,7 +26,7 @@ class LaporanController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            $validated['foto'] = $request->file('foto')->store('uploads/laporan', 'public');
+            $validated['foto'] = $request->file('foto')->store('laporan-foto', 'public');
         }
 
         $laporan = Laporan::create($validated);
@@ -61,7 +61,7 @@ class LaporanController extends Controller
             if ($laporan->foto && Storage::disk('public')->exists($laporan->foto)) {
                 Storage::disk('public')->delete($laporan->foto);
             }
-            $validated['foto'] = $request->file('foto')->store('uploads/laporan', 'public');
+            $validated['foto'] = $request->file('foto')->store('public/laporan', 'public');
         }
 
         $laporan->update($validated);

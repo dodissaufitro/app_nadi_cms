@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nagaris', function (Blueprint $table) {
+        Schema::create('tb_identitas_nagaris', function (Blueprint $table) {
             $table->id();
-            $table->string('nagari', 150);
+            $table->string('nama', 255);
             $table->string('kecamatan', 150);
             $table->string('kabupaten', 150);
             $table->string('provinsi', 150);
-            $table->string('kode_pos', 10)->nullable();
-            $table->string('gambar')->nullable();
-            $table->unsignedBigInteger('total_penduduk')->nullable();
-            $table->decimal('luas_wilayah', 10, 2)->nullable();
-            $table->unsignedSmallInteger('tahun_pembentukan')->nullable();
-            $table->text('visi')->nullable();
-            $table->json('misi');
+            $table->integer('kode_pos');
+            $table->integer('total_penduduk');
+            $table->integer('luas_wilayah');
+            $table->integer('tahun_pembentukan');
+            $table->text('visi');
+            $table->text('misi');
+            $table->string('foto', 255)->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nagaris');
+        Schema::dropIfExists('tb_identitas_nagaris');
     }
 };
