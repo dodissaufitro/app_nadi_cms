@@ -18,6 +18,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/token-login', [\App\Http\Controllers\Api\AuthController::class, 'tokenLogin']);
     Route::post('/get-token', [\App\Http\Controllers\Api\AuthController::class, 'getToken']);
     Route::post('/register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
+    Route::post('/register-no-token', [\App\Http\Controllers\Api\AuthController::class, 'registerWithoutToken']);
     Route::get('/check', [\App\Http\Controllers\Api\AuthController::class, 'check']);
     Route::get('/session-check', [\App\Http\Controllers\Api\AuthController::class, 'sessionCheck']);
 });
