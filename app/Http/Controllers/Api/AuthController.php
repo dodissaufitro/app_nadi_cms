@@ -704,4 +704,136 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Reset/Revoke specific token by ID
+     */
+    public function resetToken(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'token_id' => 'required|integer|exists:personal_access_tokens,id',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $user = $request->user();
+            $token = $user->tokens()->where('id', $request->token_id)->first();
+
+            if (!$token) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Token tidak ditemukan atau bukan milik anda'
+                ], 404);
+            }
+
+            $tokenName = $token->name;
+            $token->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Token berhasil direset',
+                'data' => [
+                    'token_name' => $tokenName,
+                    'deleted_at' => now()->toISOString()
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat reset token',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Reset all tokens except current
+     */
+    public function resetAllTokensExceptCurrent(Request $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $currentTokenId = $request->user()->currentAccessToken()->id;
+
+            $deletedCount = $user->tokens()
+                ->where('id', '!=', $currentTokenId)
+                ->count();
+
+            $user->tokens()
+                ->where('id', '!=', $currentTokenId)
+                ->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Semua token lain berhasil direset',
+                'data' => [
+                    'revoked_tokens_count' => $deletedCount,
+                    'current_token_id' => $currentTokenId
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat reset token',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Reset all tokens and create new one
+     */
+    public function resetAndCreateToken(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'device_name' => 'string|max:255'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $user = $request->user();
+
+            // Count tokens before delete
+            $deletedCount = $user->tokens()->count();
+
+            // Delete all existing tokens
+            $user->tokens()->delete();
+
+            // Create new token
+            $deviceName = $request->device_name ?? 'New Device - ' . now()->format('Y-m-d H:i:s');
+            $token = $user->createToken($deviceName);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Semua token lama berhasil direset dan token baru dibuat',
+                'data' => [
+                    'revoked_tokens_count' => $deletedCount,
+                    'new_token' => $token->plainTextToken,
+                    'token_name' => $deviceName,
+                    'token_type' => 'Bearer',
+                    'created_at' => now()->toISOString()
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat reset dan membuat token baru',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

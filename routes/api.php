@@ -67,6 +67,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/refresh-token', [\App\Http\Controllers\Api\AuthController::class, 'refreshToken']);
         Route::get('/tokens', [\App\Http\Controllers\Api\AuthController::class, 'tokens']);
         Route::post('/revoke-all-tokens', [\App\Http\Controllers\Api\AuthController::class, 'revokeAllTokens']);
+        Route::post('/reset-token', [\App\Http\Controllers\Api\AuthController::class, 'resetToken']);
+        Route::post('/reset-all-except-current', [\App\Http\Controllers\Api\AuthController::class, 'resetAllTokensExceptCurrent']);
+        Route::post('/reset-and-create-token', [\App\Http\Controllers\Api\AuthController::class, 'resetAndCreateToken']);
         Route::get('/validate-session', [\App\Http\Controllers\Api\AuthController::class, 'validateSession']);
     });
 
